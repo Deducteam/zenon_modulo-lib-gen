@@ -12,17 +12,18 @@ NBJOBS=1
 
 # Maximum time / memory allowed on a single file.
 MAXTIME="2s"
-MAXMEM="2G"
+MAXMEM="512M"
 
 # Show some usage message.
 function usage(){
   echo "Usage: $0 [OPTIONS]"
   echo "Available OPTIONS:"
-  echo "  -j N        uses N processes (default is 1),"
+  echo "  -j N        uses N processes,"
   echo "  -t N[smhd]  time limit of N seconds/minutes/hours/days per file,"
   echo "  -m N[kMGT]  memory limit of N kilo/mega/giga/tera bytes per file,"
   echo "  -c          cleanup the temporary files,"
   echo "  -h          displays this helpful message."
+  echo "By default, we use 1 process, 2s time limit and 512M memory limit."
   echo "Example of use (8 processes, 10 seconds and 2GB of RAM per file):"
   echo "  $0 -j 8 -t 10s -m 2G"
 }
@@ -86,8 +87,7 @@ do
       fi
       ;;
     c)
-      echo "Cleaning up..."
-      rm -rf bware zenon_modulo zenon_modulo.tar
+      rm -rf bware zenon_modulo
       exit 0
       ;;
     h)
@@ -132,9 +132,9 @@ function translate_file() {
     -max-size $MAXMEM $INPUT > $OUTPUT 2> /dev/null
   then 
     gzip $OUTPUT
-    echo "Generated the file [$OUTPUT.gz]"
+    echo -e "\e[92mSuccess on file [$(basename $INPUT)]\e[39m"
   else
-    echo "Unable to find a proof for [$INPUT]"
+    echo -e "\e[91mFailure on file [$(basename $INPUT)]\e[39m"
     touch "zenon_modulo/files/$(basename $INPUT .p).failed"
     rm $OUTPUT
   fi
@@ -144,7 +144,6 @@ export readonly MAXTIME=$MAXTIME
 export readonly MAXMEM=$MAXMEM
 export -f translate_file
 find bware -type f |
-  head -n 100 |
   xargs -P $NBJOBS -n 1 -I{} bash -c "translate_file {}"
 
 # Producing generation data and cleaning up ".failed" files.
@@ -174,5 +173,6 @@ echo "Creating the archive and cleaning up..."
 tar -cf zenon_modulo.tar zenon_modulo
 rm -rf zenon_modulo bware
 
-echo "All done."
+echo "===================================================="
 tar -xOf zenon_modulo.tar zenon_modulo/generation_data.txt | head -n 7
+echo "===================================================="
