@@ -143,23 +143,29 @@ function translate_file() {
 export readonly MAXTIME=$MAXTIME
 export readonly MAXMEM=$MAXMEM
 export -f translate_file
+
+START_DATE="`date -R`"
 find bware -type f |
   xargs -P $NBJOBS -n 1 -I{} bash -c "translate_file {}"
+END_DATE="`date -R`"
 
 # Producing generation data and cleaning up ".failed" files.
 echo "Producing generation data..."
 NBALL="`ls zenon_modulo/files | wc -l`"
 NB_KO="`ls zenon_modulo/files | grep "failed$" | wc -l`"
 NB_OK="`ls zenon_modulo/files | grep -v "failed$" | wc -l`"
+ZENONV="`zenon_modulo -v`"
 
-echo "Generation date    : `date -R`" > zenon_modulo/generation_data.txt
-echo "Number of processes: $NBJOBS"  >> zenon_modulo/generation_data.txt
-echo "Maximum time       : $MAXTIME" >> zenon_modulo/generation_data.txt
-echo "Maximum memory     : $MAXMEM"  >> zenon_modulo/generation_data.txt
-echo "Number of files    : $NBALL"   >> zenon_modulo/generation_data.txt
-echo "Number of success  : $NB_OK"   >> zenon_modulo/generation_data.txt
-echo "Number of failures : $NB_KO"   >> zenon_modulo/generation_data.txt
-echo "Failed on files    :"          >> zenon_modulo/generation_data.txt
+echo "Generation start date: $START_DATE" > zenon_modulo/generation_data.txt
+echo "Generation end date  : $END_DATE"  >> zenon_modulo/generation_data.txt
+echo "Zenon Modulo version : $ZENONV"    >> zenon_modulo/generation_data.txt
+echo "Number of processes  : $NBJOBS"    >> zenon_modulo/generation_data.txt
+echo "Maximum time         : $MAXTIME"   >> zenon_modulo/generation_data.txt
+echo "Maximum memory       : $MAXMEM"    >> zenon_modulo/generation_data.txt
+echo "Number of files      : $NBALL"     >> zenon_modulo/generation_data.txt
+echo "Number of success    : $NB_OK"     >> zenon_modulo/generation_data.txt
+echo "Number of failures   : $NB_KO"     >> zenon_modulo/generation_data.txt
+echo "Failed on files      :"            >> zenon_modulo/generation_data.txt
 
 for FILE in `find zenon_modulo/files -type f -name "*.failed"`
 do
@@ -173,6 +179,6 @@ echo "Creating the archive and cleaning up..."
 tar -cf zenon_modulo.tar zenon_modulo
 rm -rf zenon_modulo bware
 
-echo "===================================================="
-tar -xOf zenon_modulo.tar zenon_modulo/generation_data.txt | head -n 7
-echo "===================================================="
+echo "======================================================================"
+tar -xOf zenon_modulo.tar zenon_modulo/generation_data.txt | head -n 9
+echo "======================================================================"
