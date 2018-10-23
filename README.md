@@ -1,14 +1,14 @@
 Generation script for BWare to Dedukti
 ======================================
 
-This repository contains a script that can be used to generate dedukti files
+This repository contains a script that can be used to generate dedukti/lambdapi files
 from the BWare benchmark files. Note that `zenon_modulo` should be installed
-prior to running the script (more specifically, the `modulo` branch). It can
+prior to running the script (more specifically, the `modulo` branch for `dedukti` output and `modulo_lp` for `lambdapi` output). It can
 be installed using the following command.
 ```bash
-git clone https://scm.gforge.inria.fr/anonscm/git/zenon/zenon.git
+git clone https://github.com/elhaddadyacine/zenon_modulo.git
 cd zenon
-git checkout modulo
+git checkout modulo #or modulo_lp
 ./configure
 make
 su -c "make install"
