@@ -4,8 +4,7 @@
 BWARE_URL="http://bware.lri.fr/images/5/50/BWare_PO_v1_TFF1.tgz"
 
 # URL to the Zenon Modulo snapshot.
-ZENON_URL="https://scm.gforge.inria.fr/anonscm/gitweb?p=zenon/\
-zenon.git;a=snapshot;h=5b26243546dd4fd432316eab51ed5198f9558cea;sf=tgz"
+ZENON_URL="https://github.com/elhaddadyacine/zenon_modulo"
 
 # Number of processes to use for the translation.
 NBJOBS=1
@@ -117,16 +116,16 @@ wget -q -O - $BWARE_URL |
 
 # Download the theory files from Zenon Modulo and preparing the archive.
 echo "Downloading theory files..."
-mkdir -p zenon_modulo/logic zenon_modulo/files
-wget -q -O - $ZENON_URL |
-  tar -C zenon_modulo/logic -zxf - --wildcards "*.dk" --strip=1
+mkdir -p logic zenon_modulo/files
+git clone -b modulo_lp $ZENON_URL zm
+cp zm/logic/*.lp logic/
 
 # Processing the files.
 echo "Processing files..."
 
 function translate_file() {
   INPUT="$1"
-  OUTPUT="zenon_modulo/files/$(basename $INPUT .p).dk"
+  OUTPUT="zenon_modulo/files/$(basename $INPUT .p).lp"
 
   if zenon_modulo -itptp -modulo -modulo-heuri -odk -max-time $MAXTIME \
     -max-size $MAXMEM $INPUT > $OUTPUT 2> /dev/null

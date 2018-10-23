@@ -9,3 +9,5 @@ clean: translate_all.sh
 
 distclean: clean
 	@rm -f zenon_modulo.tar
+	@rm -rf logic
+	@rm -rf zm
